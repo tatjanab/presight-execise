@@ -117,3 +117,36 @@ Please provide:
 - A `Dockerfile` and `docker-compose.yml`.
 - Instructions for setup, database seeding, and running locally.
 - Instructions for running with Docker Compose.
+
+## Setup
+
+### Prerequisites
+
+- Node.js 22.5 or newer. The API uses the built-in `node:sqlite` module.
+- npm.
+- Docker with Compose, for the containerized setup.
+
+### Run locally
+
+From the repository root:
+
+```bash
+npm install
+npm run dev
+```
+
+- Client: http://localhost:5173
+- API: http://localhost:4000/api/health
+
+`npm run dev` starts the Vite client and the API together. The client proxies `/api` to the API.
+
+### Run with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+- Client: http://localhost:8080
+- API: http://localhost:4000/api/health
+
+SQLite data is stored in the `sqlite-data` volume.

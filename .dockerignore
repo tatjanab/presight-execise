@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+data
+**/*.db
+**/*.db-wal
+**/*.db-shm
+.DS_Store
+coverage
+.parcel-cache
