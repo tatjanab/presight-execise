@@ -1,12 +1,33 @@
+import { useQuery } from "@tanstack/react-query";
 import { UserCard } from "./UserCard";
 
-const avatar =
-  "data:image/svg+xml," +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#57534e"/><text x="50%" y="54%" text-anchor="middle" font-size="28" fill="white" font-family="sans-serif">AL</text></svg>`
-  );
+type User = {
+  id: number;
+  avatar: string;
+  first_name: string;
+  last_name: string;
+  age: number;
+  nationality: string;
+  hobbies: string[];
+};
+
+type UsersPage = {
+  items: User[];
+};
+
+async function fetchUsers(): Promise<UsersPage> {
+  const response = await fetch("/api/users?page=1");
+  if (!response.ok) {
+    throw new Error("Could not load people");
+  }
+  return response.json() as Promise<UsersPage>;
+}
 
 export function DirectoryView() {
+  const users = useQuery({
+    queryKey: ["users", { page: 1 }],
+    queryFn: fetchUsers,
+  });
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-stone-100 text-stone-900">
       <header className="shrink-0 border-b border-stone-200 bg-white px-4 py-4 sm:px-6">
@@ -68,36 +89,24 @@ export function DirectoryView() {
               People
             </h2>
             <div className="grid min-h-0 flex-1 content-start grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3 overflow-y-auto p-3">
-              <UserCard
-                avatar={avatar}
-                first_name="Ada"
-                last_name="Lovelace"
-                nationality="British"
-                age={36}
-                hobbies={[
-                  "Reading",
-                  "Mathematics",
-                  "Music",
-                  "Chess",
-                  "Writing",
-                ]}
-              />
-              <UserCard
-                avatar={avatar}
-                first_name="Grace"
-                last_name="Hopper"
-                nationality="American"
-                age={85}
-                hobbies={["Teaching", "Sailing"]}
-              />
-              <UserCard
-                avatar={avatar}
-                first_name="Alan"
-                last_name="Turing"
-                nationality="British"
-                age={41}
-                hobbies={["Computing", "Cryptography", "Mathematics"]}
-              />
+              {users.isPending ? (
+                <p className="px-1 py-2 text-sm text-stone-500">
+                  Loading people…
+                </p>
+              ) : null}
+              {users.isError ? (
+                <p className="px-1 py-2 text-sm text-red-700" role="alert">
+                  Could not load people.
+                </p>
+              ) : null}
+              {users.data?.items.length === 0 ? (
+                <p className="px-1 py-2 text-sm text-stone-500">
+                  No people found.
+                </p>
+              ) : null}
+              {users.data?.items.map((user) => (
+                <UserCard key={user.id} {...user} />
+              ))}
             </div>
           </section>
         </main>

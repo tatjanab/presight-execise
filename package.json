@@ -1,5 +1,5 @@
 {
-  "name": "presight-execise",
+  "name": "presight-exercise",
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "dev": "concurrently -n server,client -c blue,green \"npm run dev -w presight-server\" \"npm run dev -w presight-client\"",
-    "build": "npm run build -w presight-server && npm run build -w presight-client"
+    "seed": "npm run seed -w presight-server",
+    "build": "npm run build -w presight-server && npm run build -w presight-client",
+    "start": "npm run start -w presight-server"
   },
   "devDependencies": {
     "concurrently": "~9.1.2"
