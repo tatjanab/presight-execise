@@ -2,7 +2,6 @@ import express from "express";
 import { getDatabasePath, getDb } from "./db.js";
 import { facetsRouter } from "./routes/facets.js";
 import { usersRouter } from "./routes/users.js";
-import { BadRequestError } from "./errors.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
@@ -19,6 +18,10 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/users", usersRouter);
 app.use("/api/facets", facetsRouter);
 
+app.use("/api", (_req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
 // Catches anything thrown in a route; Express 5 also forwards async errors here
 app.use(
   (
@@ -27,10 +30,6 @@ app.use(
     res: express.Response,
     _next: express.NextFunction
   ) => {
-    if (err instanceof BadRequestError) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
