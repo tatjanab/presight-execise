@@ -7,14 +7,17 @@
   "scripts": {
     "dev": "tsx watch --experimental-sqlite src/index.ts",
     "seed": "tsx --experimental-sqlite src/seed.ts",
+    "seed:if-empty": "tsx --experimental-sqlite src/seed.ts --if-empty",
+    "seed:prod": "node --experimental-sqlite dist/seed.js --if-empty",
     "build": "tsc",
+    "prestart": "npm run seed:prod",
     "start": "node --experimental-sqlite dist/index.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.6.0",
     "express": "~5.1.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^10.6.0",
     "@types/express": "~5.0.1",
     "@types/node": "~22.15.17",
     "tsx": "~4.19.4",

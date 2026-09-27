@@ -8,6 +8,7 @@
     "server"
   ],
   "scripts": {
+    "predev": "npm run seed:if-empty -w presight-server",
     "dev": "concurrently -n server,client -c blue,green \"npm run dev -w presight-server\" \"npm run dev -w presight-client\"",
     "seed": "npm run seed -w presight-server",
     "build": "npm run build -w presight-server && npm run build -w presight-client",

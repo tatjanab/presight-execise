@@ -110,9 +110,14 @@ function readFacets(sql: string, filters: UserFilters): Facet[] {
   return rows.map((row) => ({ value: row.value, count: Number(row.count) }));
 }
 
-/** Top nationalities among people who match the current search and filters. */
+/**
+ * Top nationalities among people who match the current search and hobby filters.
+ * The nationality filter itself is left out: nationalities combine with OR, so
+ * applying it would hide every unselected nationality and block picking a second one.
+ */
 export function findTopNationalities(filters: UserFilters): Facet[] {
-  const where = buildWhere(filters);
+  const facetFilters = { ...filters, nationalities: [] };
+  const where = buildWhere(facetFilters);
 
   // GROUP BY collapses every matching person with the same nationality into one row.
   // COUNT(*) is how many people are in that group.
@@ -125,7 +130,7 @@ export function findTopNationalities(filters: UserFilters): Facet[] {
     ORDER BY count DESC, u.nationality ASC
     LIMIT ${TOP_FACETS}
   `,
-    filters,
+    facetFilters,
   );
 }
 

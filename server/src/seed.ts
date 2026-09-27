@@ -75,6 +75,22 @@ const HOBBIES = [
 
 const db = getDb();
 
+// --if-empty: leave an already seeded database alone (used by predev / prestart).
+if (process.argv.includes("--if-empty")) {
+  const usersTable = db
+    .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'users'")
+    .get();
+  const hasUsers =
+    usersTable !== undefined &&
+    db.prepare("SELECT 1 FROM users LIMIT 1").get() !== undefined;
+
+  if (hasUsers) {
+    console.log(`Database already seeded at ${getDatabasePath()}, skipping`);
+    closeDb();
+    process.exit(0);
+  }
+}
+
 // 1. Fresh schema (child table dropped first because of foreign keys)
 db.exec(`
   DROP TABLE IF EXISTS user_hobbies;
