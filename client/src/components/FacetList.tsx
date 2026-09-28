@@ -127,6 +127,9 @@ function FacetList({
     <ul className="space-y-0.5 px-2 pb-3">
       {items.map((facet) => {
         const isSelected = selected.includes(facet.value);
+        // A selected value can drop to 0 when other filters exclude it.
+        // Keep it visible so it stays removable, but dim it as a dead end.
+        const isEmpty = isSelected && facet.count === 0;
         return (
           <li key={facet.value}>
             <label
@@ -134,7 +137,7 @@ function FacetList({
                 isSelected
                   ? "bg-brand-600 font-medium text-white shadow-sm shadow-brand-700/30"
                   : "text-slate-700 hover:bg-brand-100"
-              }`}
+              } ${isEmpty ? "opacity-60" : ""}`}
             >
               <input
                 type="checkbox"
@@ -152,7 +155,7 @@ function FacetList({
                     : "bg-brand-100 text-brand-700"
                 }`}
               >
-                {facet.count.toLocaleString()}
+                {isEmpty ? "no matches" : facet.count.toLocaleString()}
               </span>
             </label>
           </li>
